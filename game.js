@@ -59,22 +59,24 @@ else {
 			Game.draw();
 		}	
 	}
+
 	//define objects to avoid reference errors.
 	var Background= {
 		init: function(){
-			this.ready = false;
+			this.ready = true;
 			this.img = new Image();
-			this.img.src = "background.jpeg";
+			this.img.src = "space.jpeg";
 			this.img.onload = function(){
-				Background.ready = true;
+				Background.ready = false;
 			}
 		},
 		draw: function(){
 			if(this.ready){
-				ctx.drawImage(this.img,0,0);
+				Game.ctx.drawImage(this.img,0,0);
 			}
 		}
 	}
+	
 	var Bricks= {
 		init: function(){},
 		draw: function(){},
@@ -90,8 +92,15 @@ else {
 	var Ctrl = {
 		init:function(){}
 	};
+
 	//only setup game when index.html loaded else program may crash.
 	window.onload = function(){
 		Game.setup();
+		Game.init();
+		Game.ctx.fillRect(5,5,100,100);
+		console.log(Game.canvas);
+		console.log(Game.ctx);
+		console.log(Game.width);
+		console.log(Background.ready);
 	};
 }());

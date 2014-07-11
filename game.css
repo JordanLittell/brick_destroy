@@ -1,8 +1,9 @@
 
 
 #canvas{
-	width: 100%;
-	margin: 0 auto;
-	height: 400px;
+	width: 400px;
+	margin: 0 30%;
+	height: 300px;
 	background-color: #121212;
+
 }
