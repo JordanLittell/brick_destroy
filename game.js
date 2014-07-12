@@ -8,19 +8,44 @@
 /*===========================================================
 	DEFINE ALL COMPONENTS OF THE GAME
 ===========================================================*/
-(function(){
-//scope so as to avoid conflicts with global variables
+// (function(){
+// //scope so as to avoid conflicts with global variables
+// 	var ctx = null;
+// 	window.requestAnimFrame = (function(){
+// 		return window.requestAnimationFrame	||
+// 		window.webkit.requestAnimationFrame ||
+// 		window.moz.requestAnimationFrame ||
+// 		window.o.requestAnimationFrame ||
+// 		window.ms.requestAnimationFrame ||
+// 		function(callback){
+// 			window.setTimeOut(callback,1000/60);
+// 		};
+// 	})();
+
+	(function() {
 	var ctx = null;
-	window.requestAnimFrame = (function(){
-		return window.requestAnimationFrame	||
-		window.webkit.requestAnimationFrame ||
-		window.moz.requestAnimationFrame ||
-		window.o.requestAnimationFrame ||
-		window.ms.requestAnimationFrame ||
-		function(callback){
-			window.setTimeOut(callback,1000/60);
-		};
-	})();
+    var lastTime = 0;
+    var vendors = ['webkit', 'moz'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame =
+          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
 	var Game = {
 		canvas: document.getElementById("canvas"),
 		setup: function(){
@@ -49,7 +74,7 @@
 			Ball.draw();
 		},
 		animate: function() {
-			Game.play = requestAnimFrame(Game.animate);
+			Game.play = requestAnimationFrame(Game.animate);
 			Game.draw();
 		}	
 	};
@@ -57,11 +82,11 @@
 	//define objects to avoid reference errors.
 	var Background= {
 		init: function(){
-			this.ready = true;
+			this.ready = false;
 			this.img = new Image();
 			this.img.src = "space.jpeg";
 			this.img.onload = function(){
-				Background.ready = false;
+				Background.ready = true;
 			}
 		},
 		draw: function(){
@@ -142,11 +167,12 @@
 			this.y = Game.height-this.h;
 			//speed will come in handy later during animation
 			this.speed = 4;
-			this.move();
+			
 		},
 		draw:function(){
 			ctx.fillStyle= "#CCC";
 			ctx.fillRect(this.x,this.y,this.w,this.h);
+			this.move();
 		},
 		move: function(){
 			this.x += this.speed;
@@ -160,22 +186,26 @@
 			//these refer to the speeds on the x and y axes respectively
 			this.sx = 2;
 			this.sy=-2;
-			this.move();
 		},
 		draw: function(){
 			this.edges();
 			this.collide();
-			this.move();
 			ctx.beginPath();
 			ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
 			ctx.closePath();
 			ctx.fillStyle= '#121212';
 			ctx.fill();
+			this.move();
+
 		},
 		//placeholders for configuring ball's movement later on
 		edges: function(){},
 		collide: function(){},
-		move:function(){}
+		move:function(){
+			this.x+=this.sx;
+			this.y+=this.sy;
+
+		}
 	}
 	var Ctrl = {
 		init:function(){}
