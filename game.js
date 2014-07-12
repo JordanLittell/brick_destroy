@@ -142,9 +142,19 @@
 			for (i=this.row;i--;){
 				for(j=this.col;j--;){
 					if(this.count[i][j]!==false){
+						if(Ball.x<=this.x(j)+this.w &&
+							Ball.x>=this.x(j) &&
+							Ball.y<=this.y(i)+this.h &&
+							Ball.y>=this.y(i)){
+							this.collide(i,j);
+							continue;
+						}
 						ctx.fillStyle = this.gradient(i);
 						ctx.fillRect(this.x(j),this.y(i),this.w,this.h);
 					}
+				}
+				if(this.total===(this.row*this.col)){
+					Game.levelUp();
 				}
 			}
 		},
@@ -155,6 +165,10 @@
 		y: function(col){
 			//adjust position by height of brick + gap
 			return (col*this.h) + (col*this.gap);
+		},
+		collide: function(i,j){
+			this.count[i][j]= false;
+			Ball.sy = -Ball.sy;
 		}
 	}
 	var Paddle= {
@@ -237,10 +251,8 @@
 		},
 		
 		move:function(){
-			
 			this.x+=this.sx;
 			this.y+=this.sy;
-
 		}
 	}
 	var Ctrl = {
