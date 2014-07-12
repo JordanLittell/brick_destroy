@@ -33,7 +33,7 @@ else {
 		setup: function(){
 			//SET CONTEXT IF DETECTED
 			if (canvas.getContext){
-				this.ctx = this.canvas.getContext('2d');
+				ctx = this.canvas.getContext('2d');
 				this.width = this.canvas.width;
 				this.height = this.canvas.height;
 				this.init();
@@ -72,7 +72,7 @@ else {
 		},
 		draw: function(){
 			if(this.ready){
-				Game.ctx.drawImage(this.img,0,0);
+				ctx.drawImage(this.img,0,0);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ else {
 		},
 		makeGradient: function(row,color1,color2){
 			var y = this.y(row);
-			var grad = Game.ctx.createLinearGradient(0,y,0,y+this.h);
+			var grad = ctx.createLinearGradient(0,y,0,y+this.h);
 			grad.addColorStop(0,color1);
 			grad.addColorStop(1,color2);
 			return grad;
@@ -123,28 +123,44 @@ else {
 			for (i=this.row;i--;){
 				for(j=this.col;j--;){
 					if(this.count[i][j]!==false){
-						Game.ctx.fillStyle = this.gradient(i);
-						Game.ctx.fillRect(this.x(j),this.y(i),this.w,this.h);
+						ctx.fillStyle = this.gradient(i);
+						ctx.fillRect(this.x(j),this.y(i),this.w,this.h);
 					}
 				}
 			}
 		},
 		x: function(row){
+			//adjust position by width of brick + space for gap
 			return (row*this.w)+(row*this.gap);
 		},
 		y: function(col){
+			//adjust position by height of brick + gap
 			return (col*this.h) + (col*this.gap);
 		}
 	}
 	var Paddle= {
-		init:function(){},
-		draw:function(){}
+		w: 90,
+		h:10,
+		r:9,
+		init:function(){
+			//set spawn position
+			this.x = 100;
+			this.y = Game.height-this.h;
+			//speed will come in handy later during animation
+			this.speed = 4;
+		},
+		draw:function(){
+			ctx.fillStyle= "#CCC";
+			ctx.fillRect(this.x,this.y,this.w,this.h);
+		},
+		move: function(){}
 	}
 	var Ball= {
 		r : 10,
 		init:function(){
 			this.x =120;
 			this.y=120;
+			//these refer to the speeds on the x and y axes respectively
 			this.sx = 2;
 			this.sy=-2;
 		},
@@ -152,12 +168,13 @@ else {
 			this.edges();
 			this.collide();
 			this.move();
-			Game.ctx.beginPath();
-			Game.ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
-			Game.ctx.closePath();
-			Game.ctx.fillStyle= '#eee';
-			Game.ctx.fill();
+			ctx.beginPath();
+			ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
+			ctx.closePath();
+			ctx.fillStyle= '#121212';
+			ctx.fill();
 		},
+		//placeholders for configuring ball's movement later on
 		edges: function(){},
 		collide: function(){},
 		move:function(){}
@@ -170,12 +187,16 @@ else {
 	window.onload = function(){
 		Game.setup();
 		Game.init();
+		Paddle.init();
+		console.log(Paddle);
 		Bricks.init();
 		Bricks.draw();
 		Ball.init();
 		Ball.draw();
+		Paddle.init();
+		Paddle.draw();
 		console.log(Game.canvas);
-		console.log(Game.ctx);
+		console.log(ctx);
 		console.log(Game.width);
 		console.log(Background.ready);
 	};
