@@ -8,44 +8,44 @@
 /*===========================================================
 	DEFINE ALL COMPONENTS OF THE GAME
 ===========================================================*/
-// (function(){
+(function(){
 // //scope so as to avoid conflicts with global variables
-// 	var ctx = null;
-// 	window.requestAnimFrame = (function(){
-// 		return window.requestAnimationFrame	||
-// 		window.webkit.requestAnimationFrame ||
-// 		window.moz.requestAnimationFrame ||
-// 		window.o.requestAnimationFrame ||
-// 		window.ms.requestAnimationFrame ||
-// 		function(callback){
-// 			window.setTimeOut(callback,1000/60);
-// 		};
-// 	})();
-
-	(function() {
 	var ctx = null;
-    var lastTime = 0;
-    var vendors = ['webkit', 'moz'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame =
-          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
+	window.requestAnimFrame = (function(){
+		return window.requestAnimationFrame	||
+		window.webkit.requestAnimationFrame ||
+		window.moz.requestAnimationFrame ||
+		window.o.requestAnimationFrame ||
+		window.ms.requestAnimationFrame ||
+		function(callback){
+			window.setTimeOut(callback,1000/60);
+		};
+	})();
 
-    if (!window.requestAnimationFrame)
-        window.requestAnimationFrame = function(callback, element) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-              timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
+	// (function() {
+	// var ctx = null;
+ //    var lastTime = 0;
+ //    var vendors = ['webkit', 'moz'];
+ //    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+ //        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+ //        window.cancelAnimationFrame =
+ //          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+ //    }
 
-    if (!window.cancelAnimationFrame)
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
+ //    if (!window.requestAnimationFrame)
+ //        window.requestAnimationFrame = function(callback, element) {
+ //            var currTime = new Date().getTime();
+ //            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+ //            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+ //              timeToCall);
+ //            lastTime = currTime + timeToCall;
+ //            return id;
+ //        };
+
+ //    if (!window.cancelAnimationFrame)
+ //        window.cancelAnimationFrame = function(id) {
+ //            clearTimeout(id);
+ //        };
     var Screen = {
     	welcome: function(){
     		this.text = "CANVAS RICOCHET";
@@ -69,7 +69,6 @@
 			this.textSub="click to retry";
 			this.textColor="red";
 			this.create();
-			
 		}
     }
     var Hud = {
@@ -93,12 +92,19 @@
 				ctx = this.canvas.getContext('2d');
 				this.width = this.canvas.width;
 				this.height = this.canvas.height;
-				Screen.welcome();
 				this.canvas.addEventListener('click',Game.rungame,false);
+				Screen.welcome();
 				Ctrl.init();
 			}
 		},
+		levelup:function(){
+			Hud.lv+=1;
+			Bricks.init();
+			Ball.init();
+			Paddle.init();
+		},
 		rungame:function(){
+			
 			Game.canvas.removeEventListener('click',Game.rungame,false);
 			Game.init();
 			Game.animate();
@@ -109,11 +115,11 @@
 			Game.init();
 		},
 		init: function(){
-			Bricks.init();
-			Paddle.init();
 			Hud.init();
-			Ball.init();
 			Background.init();
+			Ball.init();
+			Paddle.init();
+			Bricks.init();
 			this.animate();
 		},
 		draw: function(){
@@ -206,7 +212,7 @@
 					}
 				}
 				if(this.total===(this.row*this.col)){
-					Game.levelUp();
+					Game.levelup();
 				}
 			}
 		},
