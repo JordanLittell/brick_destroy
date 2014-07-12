@@ -1,12 +1,5 @@
 //verify to see if browser supports canvas contenxt 
 //if so assign context to it
-var canvas = document.getElementById('canvas');
-if (canvas.getContext && canvas.getContext('2d')){
-	var ctx = canvas.getContext('2d');
-}
-else {
-	console.log("Canvas not detected.");
-	}
 
 //create engine components 
 
@@ -41,10 +34,11 @@ else {
 			}
 		},
 		init: function(){
-			Background.init();
 			Bricks.init();
 			Paddle.init();
 			Ball.init();
+			Background.init();
+			this.animate();
 		},
 		draw: function(){
 			//clear rect will clear the drawing board each time update occurs
@@ -55,10 +49,10 @@ else {
 			Ball.draw();
 		},
 		animate: function() {
-			Game.play = Game.requestAnimFrame(Game.animate);
+			Game.play = requestAnimFrame(Game.animate);
 			Game.draw();
 		}	
-	}
+	};
 
 	//define objects to avoid reference errors.
 	var Background= {
@@ -148,12 +142,15 @@ else {
 			this.y = Game.height-this.h;
 			//speed will come in handy later during animation
 			this.speed = 4;
+			this.move();
 		},
 		draw:function(){
 			ctx.fillStyle= "#CCC";
 			ctx.fillRect(this.x,this.y,this.w,this.h);
 		},
-		move: function(){}
+		move: function(){
+			this.x += this.speed;
+		}
 	}
 	var Ball= {
 		r : 10,
@@ -163,6 +160,7 @@ else {
 			//these refer to the speeds on the x and y axes respectively
 			this.sx = 2;
 			this.sy=-2;
+			this.move();
 		},
 		draw: function(){
 			this.edges();
@@ -182,22 +180,8 @@ else {
 	var Ctrl = {
 		init:function(){}
 	};
-
 	//only setup game when index.html loaded else program may crash.
 	window.onload = function(){
 		Game.setup();
-		Game.init();
-		Paddle.init();
-		console.log(Paddle);
-		Bricks.init();
-		Bricks.draw();
-		Ball.init();
-		Ball.draw();
-		Paddle.init();
-		Paddle.draw();
-		console.log(Game.canvas);
-		console.log(ctx);
-		console.log(Game.width);
-		console.log(Background.ready);
 	};
 }());
