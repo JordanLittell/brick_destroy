@@ -46,17 +46,55 @@
         window.cancelAnimationFrame = function(id) {
             clearTimeout(id);
         };
+    var Screen = {
+    	welcome: function(){
+    		this.text = "CANVAS RICOCHET";
+    		this.textSub = "Click to Start";
+    		this.textColor = "White";
+    		this.create();
+    	},
+    	create: function(){
+    		ctx.fillStyle="black";
+    		ctx.fillRect(0,0,Game.width,Game.height);
+    		ctx.fillStyle=this.textColor;
+    		ctx.textAlign = 'center';
+    		ctx.font="30px helvetica, arial";
+    		ctx.fillText(this.text,Game.width/2,Game.height/2+10);
+    		ctx.fillStyle ="#999999";
+    		ctx.font="20px helvetica, arial";
+    		ctx.fillText(this.textSub,Game.width/2,Game.height/2+30);
+    	},
+    	gameover: function(){
+			this.text= "Game Over";
+			this.textSub="click to retry";
+			this.textColor="red";
+			this.create();
+			
+		}
+    }
 	var Game = {
 		canvas: document.getElementById("canvas"),
+		
 		setup: function(){
 			//SET CONTEXT IF DETECTED
 			if (canvas.getContext){
 				ctx = this.canvas.getContext('2d');
 				this.width = this.canvas.width;
 				this.height = this.canvas.height;
-				this.init();
+				Screen.welcome();
+				this.canvas.addEventListener('click',Game.rungame,false);
 				Ctrl.init();
 			}
+		},
+		rungame:function(){
+			Game.canvas.removeEventListener('click',Game.rungame,false);
+			Game.init();
+			Game.animate();
+			
+		},
+		restartgame: function(){
+			Game.canvas.removeEventListener('click',Game.restartgame,false);
+			Game.init();
 		},
 		init: function(){
 			Bricks.init();
@@ -193,10 +231,9 @@
 			if (Ctrl.left&&this.x<Game.width-this.w/2) {
 				this.x += this.speed;
 			}
-			if (Ctrl.right && this.x>-this.w/2){
+			else if (Ctrl.right && this.x>-this.w/2){
 				this.x+= -this.speed;
 			}
-			
 		}
 	}
 	var Ball= {
@@ -206,7 +243,9 @@
 			this.y=120;
 			//these refer to the speeds on the x and y axes respectively
 			this.sx = 2;
-			this.sy=-2;
+			this.sy = -2;
+			console.log(this.sx);
+			console.log(this.sy)
 		},
 		draw: function(){
 			this.edges();
@@ -217,13 +256,17 @@
 			ctx.fillStyle= '#121212';
 			ctx.fill();
 			this.move();
+			console.log(this.sx);
+			console.log(this.sy);
 
 		},
 		collide:function(){
 			if(this.x>=Paddle.x&&this.x<=Paddle.x+Paddle.w&&this.y<=Paddle.y+Paddle.h&&this.y>=Paddle.y){
-				this.sx=3*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
+				this.sx=+7*((this.x-(Paddle.x+Paddle.w/2))/Paddle.w);
 				this.sy=-this.sy;
 			}
+			console.log(this.sx);
+			console.log(this.sy);
 		},
 		//placeholders for configuring ball's movement later on
 		edges: function(){
@@ -237,8 +280,8 @@
 				//bottom boundry
 				this.sy=this.sx=0;
 				this.x=this.y=1000;
-				// Screen.gameover();
-				canvas.addEventListener('Click',Game.restartgame,false);
+				Screen.gameover();
+				Game.canvas.addEventListener('click',Game.restartgame,false);
 				return;
 			}
 			if(this.x <1){
@@ -295,6 +338,5 @@
 	//only setup game when index.html loaded else program may crash.
 	window.onload = function(){
 		Game.setup();
-
 	};
 }());
