@@ -72,9 +72,21 @@
 			
 		}
     }
+    var Hud = {
+    	init:function(){
+    		this.lv=1;
+    		this.score=0;
+    	},
+    	draw:function(){
+    		ctx.font='8 px helvetica, arial';
+    		ctx.fillStyle="white";
+    		ctx.fillText("score: "+ this.score, 40, Game.height-10);
+    		ctx.textAlign = 'center';
+    		ctx.fillText("lv: "+this.lv, Game.width -20,Game.height -5);
+    	}
+    }
 	var Game = {
 		canvas: document.getElementById("canvas"),
-		
 		setup: function(){
 			//SET CONTEXT IF DETECTED
 			if (canvas.getContext){
@@ -99,6 +111,7 @@
 		init: function(){
 			Bricks.init();
 			Paddle.init();
+			Hud.init();
 			Ball.init();
 			Background.init();
 			this.animate();
@@ -107,6 +120,7 @@
 			//clear rect will clear the drawing board each time update occurs
 			ctx.clearRect(0,0,this.width,this.height);
 			Background.draw();
+			Hud.draw();
 			Bricks.draw();
 			Paddle.draw();
 			Ball.draw();
@@ -141,7 +155,7 @@
 		w: 60,
 		h: 15,
 		init: function(){
-			this.row = 3;
+			this.row = 2 + Hud.lv;
 			this.total = 0;
 			this.count =[this.row];
 			for(var i = this.row;i--;){
@@ -205,6 +219,8 @@
 			return (col*this.h) + (col*this.gap);
 		},
 		collide: function(i,j){
+			Hud.score+=1;
+			this.total +=1;
 			this.count[i][j]= false;
 			Ball.sy = -Ball.sy;
 		}
@@ -239,13 +255,11 @@
 	var Ball= {
 		r : 10,
 		init:function(){
-			this.x =120;
-			this.y=120;
+			this.x =100;
+			this.y=100;
 			//these refer to the speeds on the x and y axes respectively
-			this.sx = 2;
-			this.sy = -2;
-			console.log(this.sx);
-			console.log(this.sy)
+			this.sx = 1+(0.4*Hud.lv);
+			this.sy = -1.5-(0.4*Hud.lv);
 		},
 		draw: function(){
 			this.edges();
@@ -256,17 +270,12 @@
 			ctx.fillStyle= '#121212';
 			ctx.fill();
 			this.move();
-			console.log(this.sx);
-			console.log(this.sy);
-
 		},
 		collide:function(){
 			if(this.x>=Paddle.x&&this.x<=Paddle.x+Paddle.w&&this.y<=Paddle.y+Paddle.h&&this.y>=Paddle.y){
 				this.sx=+7*((this.x-(Paddle.x+Paddle.w/2))/Paddle.w);
 				this.sy=-this.sy;
 			}
-			console.log(this.sx);
-			console.log(this.sy);
 		},
 		//placeholders for configuring ball's movement later on
 		edges: function(){
@@ -279,7 +288,7 @@
 			if(this.y>Game.height){
 				//bottom boundry
 				this.sy=this.sx=0;
-				this.x=this.y=1000;
+				
 				Screen.gameover();
 				Game.canvas.addEventListener('click',Game.restartgame,false);
 				return;
@@ -295,7 +304,6 @@
 				this.sx=-this.sx;
 			}
 		},
-		
 		move:function(){
 			this.x+=this.sx;
 			this.y+=this.sy;
