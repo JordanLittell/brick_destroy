@@ -190,8 +190,11 @@
 		},
 		move: function(){
 			//define bounds for the paddle
-			if (this.x+this.w<Game.width && this.x>0) {
+			if (Ctrl.left&&this.x<Game.width-this.w/2) {
 				this.x += this.speed;
+			}
+			if (Ctrl.right && this.x>-this.w/2){
+				this.x+= -this.speed;
 			}
 			
 		}
@@ -218,7 +221,7 @@
 		},
 		collide:function(){
 			if(this.x>=Paddle.x&&this.x<=Paddle.x+Paddle.w&&this.y<=Paddle.y+Paddle.h&&this.y>=Paddle.y){
-				this.sx=7*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
+				this.sx=3*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
 				this.sy=-this.sy;
 			}
 		},
@@ -234,7 +237,7 @@
 				//bottom boundry
 				this.sy=this.sx=0;
 				this.x=this.y=1000;
-				Screen.gameover();
+				// Screen.gameover();
 				canvas.addEventListener('Click',Game.restartgame,false);
 				return;
 			}
@@ -256,10 +259,42 @@
 		}
 	}
 	var Ctrl = {
-		init:function(){}
+		//capture input here 
+		init:function(){
+			window.addEventListener('keydown',this.keyDown,true);
+			window.addEventListener('keyup',this.keyUp,true);
+		},
+		keyDown:function(event){
+			//capture input and move paddle
+			switch(event.keyCode){
+				case 39:
+					Ctrl.left = true;
+					break;
+				case 37:
+					Ctrl.right = true;
+					break;
+				default:
+					break;
+			}
+		},
+		keyUp: function(event){
+			//key up will reset Ctrl input monitoring each frame
+			switch(event.keyCode){
+				case 39:
+					Ctrl.left=false;
+					break;
+				case 37:
+					Ctrl.right=false;
+					break;
+				default:
+					break;
+
+			}
+		}
 	};
 	//only setup game when index.html loaded else program may crash.
 	window.onload = function(){
 		Game.setup();
+
 	};
 }());
