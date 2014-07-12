@@ -76,12 +76,13 @@ else {
 			}
 		}
 	}
-	//draw bricks so that they appear 
+	
 	var Bricks= {
+		//add the bricks dynamically
 		col: 5,
 		gap: 2,
-		w: 70,
-		h: 5,
+		w: 60,
+		h: 15,
 		init: function(){
 			this.row = 3;
 			this.total = 0;
@@ -136,12 +137,30 @@ else {
 		}
 	}
 	var Paddle= {
-		init: function(){},
-		draw: function(){},
+		init:function(){},
+		draw:function(){}
 	}
 	var Ball= {
-		init: function(){},
-		draw: function(){},
+		r : 10,
+		init:function(){
+			this.x =120;
+			this.y=120;
+			this.sx = 2;
+			this.sy=-2;
+		},
+		draw: function(){
+			this.edges();
+			this.collide();
+			this.move();
+			Game.ctx.beginPath();
+			Game.ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
+			Game.ctx.closePath();
+			Game.ctx.fillStyle= '#eee';
+			Game.ctx.fill();
+		},
+		edges: function(){},
+		collide: function(){},
+		move:function(){}
 	}
 	var Ctrl = {
 		init:function(){}
@@ -153,6 +172,8 @@ else {
 		Game.init();
 		Bricks.init();
 		Bricks.draw();
+		Ball.init();
+		Ball.draw();
 		console.log(Game.canvas);
 		console.log(Game.ctx);
 		console.log(Game.width);
