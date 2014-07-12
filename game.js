@@ -204,21 +204,43 @@
 		},
 		collide:function(){
 			if(this.x>=Paddle.x&&this.x<=Paddle.x+Paddle.w&&this.y<=Paddle.y+Paddle.h&&this.y>=Paddle.y){
-				this.ax=7*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
-				this.ay=-this.sy;
+				this.sx=7*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
+				this.sy=-this.sy;
 			}
 		},
 		//placeholders for configuring ball's movement later on
-		edges: function(){},
-		collide: function(){},
-		move:function(){
+		edges: function(){
+		//set up the boundries of the game
+			if(this.y<1){
+				//top boundry
+				this.y = 1;
+				this.sy=-this.sy;
+			}
+			if(this.y>Game.height){
+				//bottom boundry
+				this.sy=this.sx=0;
+				this.x=this.y=1000;
+				Screen.gameover();
+				canvas.addEventListener('Click',Game.restartgame,false);
+				return;
+			}
+			if(this.x <1){
+				//left boundry
+				this.x =1;
+				this.sx = -this.sx;
+			}
+			if(this.x > Game.width){
+				//right boundry
+				this.x = Game.width -1;
+				this.sx=-this.sx;
+			}
+		},
 		
-			if(this.x+this.r<Game.width){
-				this.x+=this.sx;
-			}
-			if(this.y-this.r<Game.height){
-				this.y+=this.sy;
-			}
+		move:function(){
+			
+			this.x+=this.sx;
+			this.y+=this.sy;
+
 		}
 	}
 	var Ctrl = {
