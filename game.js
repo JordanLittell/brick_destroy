@@ -76,10 +76,64 @@ else {
 			}
 		}
 	}
-	
+	//draw bricks so that they appear 
 	var Bricks= {
-		init: function(){},
-		draw: function(){},
+		col: 5,
+		gap: 2,
+		w: 70,
+		h: 5,
+		init: function(){
+			this.row = 3;
+			this.total = 0;
+			this.count =[this.row];
+			for(var i = this.row;i--;){
+				this.count[i] = [this.col];
+			}
+		}, 
+		gradient: function(row){
+			switch(row){
+				case 0:
+					return this.gradientPurple ?
+						this.gradientPurple:
+						this.grandientPurple = this.makeGradient(row,'#bd06f9','#9604c7');
+				case 1:
+					return this.gradientRed ? 
+						this.gradientRed:
+						this.gradientRed = this.makeGradient(row,'#f9064a','#c7043b');
+				case 2: 
+					return this.gradientGreen ?
+						this.gradientGreen:
+						this.gradientGreen = this.makeGradient(row,'#05fa15','#04c711');
+				default:
+					return this.gradientOrange ?
+						this.gradientOrange: 
+						this.gradientOrange = this.makeGradient(row,'#faa105','#c77f04');
+			}
+		},
+		makeGradient: function(row,color1,color2){
+			var y = this.y(row);
+			var grad = Game.ctx.createLinearGradient(0,y,0,y+this.h);
+			grad.addColorStop(0,color1);
+			grad.addColorStop(1,color2);
+			return grad;
+		},
+		draw: function(){
+			var i,j;
+			for (i=this.row;i--;){
+				for(j=this.col;j--;){
+					if(this.count[i][j]!==false){
+						Game.ctx.fillStyle = this.gradient(i);
+						Game.ctx.fillRect(this.x(j),this.y(i),this.w,this.h);
+					}
+				}
+			}
+		},
+		x: function(row){
+			return (row*this.w)+(row*this.gap);
+		},
+		y: function(col){
+			return (col*this.h) + (col*this.gap);
+		}
 	}
 	var Paddle= {
 		init: function(){},
@@ -97,7 +151,8 @@ else {
 	window.onload = function(){
 		Game.setup();
 		Game.init();
-		Game.ctx.fillRect(5,5,100,100);
+		Bricks.init();
+		Bricks.draw();
 		console.log(Game.canvas);
 		console.log(Game.ctx);
 		console.log(Game.width);
