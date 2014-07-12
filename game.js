@@ -175,7 +175,11 @@
 			this.move();
 		},
 		move: function(){
-			this.x += this.speed;
+			//define bounds for the paddle
+			if (this.x+this.w<Game.width && this.x>0) {
+				this.x += this.speed;
+			}
+			
 		}
 	}
 	var Ball= {
@@ -198,13 +202,23 @@
 			this.move();
 
 		},
+		collide:function(){
+			if(this.x>=Paddle.x&&this.x<=Paddle.x+Paddle.w&&this.y<=Paddle.y+Paddle.h&&this.y>=Paddle.y){
+				this.ax=7*((this.x-(Paddle.x-Paddle.w/2))/Paddle.w);
+				this.ay=-this.sy;
+			}
+		},
 		//placeholders for configuring ball's movement later on
 		edges: function(){},
 		collide: function(){},
 		move:function(){
-			this.x+=this.sx;
-			this.y+=this.sy;
-
+		
+			if(this.x+this.r<Game.width){
+				this.x+=this.sx;
+			}
+			if(this.y-this.r<Game.height){
+				this.y+=this.sy;
+			}
 		}
 	}
 	var Ctrl = {
