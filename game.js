@@ -8,44 +8,44 @@
 /*===========================================================
 	DEFINE ALL COMPONENTS OF THE GAME
 ===========================================================*/
-(function(){
+// (function(){
 // //scope so as to avoid conflicts with global variables
-	var ctx = null;
-	window.requestAnimFrame = (function(){
-		return window.requestAnimationFrame	||
-		window.webkit.requestAnimationFrame ||
-		window.moz.requestAnimationFrame ||
-		window.o.requestAnimationFrame ||
-		window.ms.requestAnimationFrame ||
-		function(callback){
-			window.setTimeOut(callback,1000/60);
-		};
-	})();
-
-	// (function() {
 	// var ctx = null;
- //    var lastTime = 0;
- //    var vendors = ['webkit', 'moz'];
- //    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
- //        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
- //        window.cancelAnimationFrame =
- //          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
- //    }
+	// window.requestAnimFrame = (function(){
+	// 	return window.requestAnimationFrame	||
+	// 	window.webkit.requestAnimationFrame ||
+	// 	window.moz.requestAnimationFrame ||
+	// 	window.o.requestAnimationFrame ||
+	// 	window.ms.requestAnimationFrame ||
+	// 	function(callback){
+	// 		window.setTimeOut(callback,1000/60);
+	// 	};
+	// })();
 
- //    if (!window.requestAnimationFrame)
- //        window.requestAnimationFrame = function(callback, element) {
- //            var currTime = new Date().getTime();
- //            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
- //            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
- //              timeToCall);
- //            lastTime = currTime + timeToCall;
- //            return id;
- //        };
+	(function() {
+	var ctx = null;
+    var lastTime = 0;
+    var vendors = ['webkit', 'moz'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame =
+          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
 
- //    if (!window.cancelAnimationFrame)
- //        window.cancelAnimationFrame = function(id) {
- //            clearTimeout(id);
- //        };
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
     var Screen = {
     	welcome: function(){
     		this.text = "CANVAS RICOCHET";
@@ -112,6 +112,7 @@
 		},
 		restartgame: function(){
 			Game.canvas.removeEventListener('click',Game.restartgame,false);
+			window.cancelAnimationFrame(Game.play);
 			Game.init();
 		},
 		init: function(){
@@ -132,7 +133,7 @@
 			Ball.draw();
 		},
 		animate: function() {
-			Game.play = requestAnimationFrame(Game.animate);
+			Game.play = requestAnimationFrame(Game.animate,ctx);
 			Game.draw();
 		}	
 	};
@@ -159,7 +160,7 @@
 		col: 5,
 		gap: 2,
 		w: 60,
-		h: 15,
+		h: 8,
 		init: function(){
 			this.row = 2 + Hud.lv;
 			this.total = 0;
