@@ -48,7 +48,7 @@
         };
     var Screen = {
     	welcome: function(){
-    		this.text = "CANVAS RICOCHET";
+    		this.text = "BLOCK DESTROYER";
     		this.textSub = "Click to Start";
     		this.textColor = "White";
     		this.create();
@@ -160,7 +160,7 @@
 		col: 5,
 		gap: 2,
 		w: 60,
-		h: 8,
+		h: 5,
 		init: function(){
 			this.row = 2 + Hud.lv;
 			this.total = 0;
@@ -262,10 +262,16 @@
 	var Ball= {
 		r : 10,
 		init:function(){
-			this.x =100;
+			this.x =20 + Math.random()*200;
 			this.y=100;
 			//these refer to the speeds on the x and y axes respectively
-			this.sx = 1+(0.4*Hud.lv);
+			rand = Math.random()
+			if (rand<0.5){
+				pwr = 0;
+			} else {
+				pwr = 1;
+			}
+			this.sx = (1+(0.4*Hud.lv))*Math.pow(-1,pwr);
 			this.sy = -1.5-(0.4*Hud.lv);
 		},
 		draw: function(){
@@ -274,7 +280,7 @@
 			ctx.beginPath();
 			ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
 			ctx.closePath();
-			ctx.fillStyle= '#121212';
+			ctx.fillStyle= '#FFFFFD';
 			ctx.fill();
 			this.move();
 		},
@@ -295,7 +301,7 @@
 			if(this.y>Game.height){
 				//bottom boundry
 				this.sy=this.sx=0;
-				
+				this.x=this.y=1000;
 				Screen.gameover();
 				Game.canvas.addEventListener('click',Game.restartgame,false);
 				return;
